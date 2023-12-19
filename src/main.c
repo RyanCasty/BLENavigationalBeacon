@@ -9,7 +9,7 @@
 static uint8_t mfg_data[] = { 0xff, 0xff, 0x00 };
 
 static const struct bt_data ad[] = {
-	BT_DATA(BT_DATA_MANUFACTURER_DATA, mfg_data, 3),
+	BT_DATA(BT_DATA_NAME_COMPLETE, "Beacon_1", 9),
 };
 
 int main(void)
@@ -49,11 +49,12 @@ int main(void)
 	}
 
 	while (true) {
-		printk("Start Extended Advertising...");
+		printk("Start Extended Advertising...\n");
+
+		// Start extended advertising
 		err = bt_le_ext_adv_start(adv, BT_LE_EXT_ADV_START_DEFAULT);
 		if (err) {
-			printk("Failed to start extended advertising "
-			       "(err %d)\n", err);
+			printk("Failed to start extended advertising (err %d)\n", err);
 			return 0;
 		}
 		printk("done.\n");
@@ -63,7 +64,7 @@ int main(void)
 
 			mfg_data[2]++;
 
-			printk("Set Periodic Advertising Data...");
+			printk("Set Periodic Advertising Data...\n");
 			err = bt_le_per_adv_set_data(adv, ad, ARRAY_SIZE(ad));
 			if (err) {
 				printk("Failed (err %d)\n", err);
@@ -72,18 +73,8 @@ int main(void)
 			printk("done.\n");
 		}
 
-		k_sleep(K_SECONDS(10));
-
-		printk("Stop Extended Advertising...");
-		err = bt_le_ext_adv_stop(adv);
-		if (err) {
-			printk("Failed to stop extended advertising "
-			       "(err %d)\n", err);
-			return 0;
-		}
-		printk("done.\n");
-
-		k_sleep(K_SECONDS(10));
+		k_sleep(K_SECONDS(10));  // Sleep before starting the next cycle
 	}
+
 	return 0;
 }
